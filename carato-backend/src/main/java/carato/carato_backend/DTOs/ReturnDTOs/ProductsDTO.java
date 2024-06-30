@@ -59,10 +59,11 @@ public class ProductsDTO {
 
         Set<Products_Metals> metals = new HashSet<>(product.getProductsMetals());
         metalsList = metals.stream()
+                .sorted(Comparator.comparing((Products_Metals pm) -> pm.getMetalId().getId())
+                        .thenComparing(pm -> pm.getMetalId().getPrice()))
                 .map(metal -> {
 
                     Map<String, Object> map = new LinkedHashMap<>();
-
                     map.put("id", metal.getMetalId().getId());
                     map.put("name", metal.getMetalId().getName());
                     map.put("metalFineness", metal.getMetalId().getMetalFineness());
@@ -70,14 +71,19 @@ public class ProductsDTO {
                     return map;
                 }).collect(Collectors.toList());
 
+
         Set<Products_Sizes> sizes = new HashSet<>(product.getProductsSizes());
         sizesList = sizes.stream()
+                .sorted(Comparator.comparing((Products_Sizes ps) -> ps.getSizeId().getId())
+                        .thenComparing(ps -> ps.getSizeId().getName()))
                 .map(size -> {
 
                     Map<String, Object> map = new LinkedHashMap<>();
 
                     map.put("id", size.getSizeId().getId());
                     map.put("name", size.getSizeId().getName());
+                    map.put("price", size.getPrice());
+                    map.put("quantity", size.getQuantity());
                     map.put("sizeCategoryId", size.getSizeId().getSizeCategoryId().getId());
                     map.put("sizeCategoryName", size.getSizeId().getSizeCategoryId().getName());
 
