@@ -1,0 +1,15 @@
+package carato.carato_backend.DTOs.Post_Put_Requests.Products;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SizeCategoriesRequest {
+
+    private String name;
+}
