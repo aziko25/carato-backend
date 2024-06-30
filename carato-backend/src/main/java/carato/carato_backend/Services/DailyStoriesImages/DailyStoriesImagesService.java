@@ -77,7 +77,7 @@ public class DailyStoriesImagesService {
 
             Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(UUID.randomUUID().toString(), "delete-daily-stories-images-trigger")
-                    .startAt(Date.from(dailyStoriesImages.getCreatedTime().plusMinutes(3).atZone(ZoneId.systemDefault()).toInstant()))
+                    .startAt(Date.from(dailyStoriesImages.getCreatedTime().plusHours(24).atZone(ZoneId.systemDefault()).toInstant()))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule())
                     .build();
 
