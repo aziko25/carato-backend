@@ -2,11 +2,14 @@ package carato.carato_backend.Models.Products;
 
 import carato.carato_backend.Models.Products.ManyToMany.Products_Metals;
 import carato.carato_backend.Models.Products.ManyToMany.Products_Sizes;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
 @Getter
 @Setter
@@ -21,6 +24,7 @@ public class Products {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdTime;
 
     @Column(unique = true)

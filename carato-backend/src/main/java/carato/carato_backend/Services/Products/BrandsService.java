@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class BrandsService {
         }
 
         Brands brand = Brands.builder()
+                .createdTime(LocalDateTime.now())
                 .name(brandRequest.getName())
                 .description(brandRequest.getDescription())
                 .build();

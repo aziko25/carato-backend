@@ -4,6 +4,7 @@ import carato.carato_backend.Models.Products.ManyToMany.Products_Metals;
 import carato.carato_backend.Models.Products.ManyToMany.Products_Sizes;
 import carato.carato_backend.Models.Products.Product_Images;
 import carato.carato_backend.Models.Products.Products;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,7 +24,10 @@ public class ProductsDTO {
 
     private Long id;
     private String name;
+
+    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdTime;
+
     private String description;
     private Double price;
     private String previewImageUrl;
