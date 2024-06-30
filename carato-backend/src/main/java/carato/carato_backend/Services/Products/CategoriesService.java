@@ -44,7 +44,7 @@ public class CategoriesService {
         }
 
         String imageUrl = null;
-        if (!media.isEmpty()) {
+        if (media != null && !media.isEmpty()) {
 
             imageUrl = fileUploadUtil.handleMediaUpload(categoryRequest.getName(), media);
         }
@@ -96,7 +96,7 @@ public class CategoriesService {
             category.setName(categoryRequest.getName());
         }
 
-        if (!media.isEmpty()) {
+        if (media != null && !media.isEmpty()) {
 
             String imageUrl = fileUploadUtil.handleMediaUpload(name, media);
 
