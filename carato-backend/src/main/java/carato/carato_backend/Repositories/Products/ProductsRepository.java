@@ -2,6 +2,7 @@ package carato.carato_backend.Repositories.Products;
 
 import carato.carato_backend.Models.Products.Brands;
 import carato.carato_backend.Models.Products.Categories;
+import carato.carato_backend.Models.Products.ManyToMany.Products_Sizes;
 import carato.carato_backend.Models.Products.Products;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,4 +52,6 @@ public interface ProductsRepository extends JpaRepository<Products, Long> {
             Pageable pageable);
 
     List<Products> findAllByBrandId(Brands brand);
+
+    Products findByIdAndProductsSizes(Long id, List<Products_Sizes> productsSizes);
 }

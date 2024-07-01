@@ -5,9 +5,11 @@ import carato.carato_backend.DTOs.Filters.Products.ProductFilters;
 import carato.carato_backend.DTOs.Post_Put_Requests.Products.ProductsRequest;
 import carato.carato_backend.DTOs.Post_Put_Requests.Products.Products_Sizes_Request;
 import carato.carato_backend.DTOs.ReturnDTOs.ProductsDTO;
+import carato.carato_backend.Models.Orders.Orders_Products;
 import carato.carato_backend.Models.Products.*;
 import carato.carato_backend.Models.Products.ManyToMany.Products_Metals;
 import carato.carato_backend.Models.Products.ManyToMany.Products_Sizes;
+import carato.carato_backend.Repositories.Orders.Orders_Products_Repository;
 import carato.carato_backend.Repositories.Products.*;
 import carato.carato_backend.Repositories.Products.ManyToMany.Products_Metals_Repository;
 import carato.carato_backend.Repositories.Products.ManyToMany.Products_Sizes_Repository;
@@ -41,6 +43,7 @@ public class ProductsService {
 
     private final Products_Metals_Repository productsMetalsRepository;
     private final Products_Sizes_Repository productsSizesRepository;
+    private final Orders_Products_Repository ordersProductsRepository;
 
     private final FileUploadUtil fileUploadUtil;
 
@@ -211,10 +214,12 @@ public class ProductsService {
         List<Products_Metals> productsMetalsList = product.getProductsMetals();
         List<Products_Sizes> productsSizesList = product.getProductsSizes();
         List<Product_Images> productImagesList = productImagesRepository.findAllByProductId(product);
+        List<Orders_Products> ordersProductsList = ordersProductsRepository.findAllByProductId(product);
 
         productsMetalsRepository.deleteAll(productsMetalsList);
         productsSizesRepository.deleteAll(productsSizesList);
         productImagesRepository.deleteAll(productImagesList);
+        ordersProductsRepository.deleteAll(ordersProductsList);
 
         fileUploadUtil.handleMediaDeletion(product.getImageUrl());
         fileUploadUtil.handleMultipleMediaDeletion(productImagesList.stream().map(Product_Images::getImage).toList());

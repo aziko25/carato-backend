@@ -70,6 +70,7 @@ public class ProductsDTO {
                 .map(metal -> {
 
                     Map<String, Object> map = new LinkedHashMap<>();
+
                     map.put("id", metal.getMetalId().getId());
                     map.put("name", metal.getMetalId().getName());
                     map.put("metalFineness", metal.getMetalId().getMetalFineness());
