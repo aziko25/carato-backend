@@ -77,7 +77,11 @@ public class OrdersService {
         order.setOrdersProductsList(setSelectedProductsToOrder(orderRequest, order));
 
         order.setOrderPaymentId(order.getId().toString());
-        order.setPayTransactionUrl(clickService.createTransaction(order, orderRequest.getReturnUrl()));
+
+        if (orderRequest.getPaymentType().equalsIgnoreCase("click")) {
+
+            order.setPayTransactionUrl(clickService.createTransaction(order, orderRequest.getReturnUrl()));
+        }
 
         return new OrdersDTO(ordersRepository.save(order));
     }

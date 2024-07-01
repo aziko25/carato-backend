@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrdersRequest {
 
+    private String paymentType;
     private String phone;
     private String email;
     private String comment;
