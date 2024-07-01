@@ -18,6 +18,7 @@ import carato.carato_backend.Repositories.Products.ProductsRepository;
 import carato.carato_backend.Repositories.Products.SizesRepository;
 import carato.carato_backend.Repositories.Users.UserAddressesRepository;
 import carato.carato_backend.Repositories.Users.UsersRepository;
+import carato.carato_backend.Services.Payments.ClickService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +49,8 @@ public class OrdersService {
     private final UsersRepository usersRepository;
     private final UserAddressesRepository userAddressesRepository;
 
+    private final ClickService clickService;
+
     @Value("${pageSize}")
     private Integer pageSize;
 
@@ -70,6 +73,9 @@ public class OrdersService {
                 .build();
 
         ordersRepository.save(order);
+
+        order.setOrderPaymentId(order.getId().toString());
+        order.setReturnUrl(clickService.createTransaction(order, orderRequest.getReturnUrl()));
 
         order.setOrdersProductsList(setSelectedProductsToOrder(orderRequest, order));
 

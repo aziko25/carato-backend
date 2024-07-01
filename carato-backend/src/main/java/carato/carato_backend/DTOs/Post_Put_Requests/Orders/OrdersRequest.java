@@ -17,6 +17,7 @@ public class OrdersRequest {
     private String email;
     private String comment;
     private Boolean isPaymentDone;
+    private String returnUrl;
 
     private Long addressId;
 
