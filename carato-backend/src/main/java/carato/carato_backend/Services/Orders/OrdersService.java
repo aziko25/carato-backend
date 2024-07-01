@@ -28,6 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,7 +71,7 @@ public class OrdersService {
 
         ordersRepository.save(order);
 
-        order.setTotalSum(setSelectedProductsToOrder(orderRequest, order));
+        order.setOrdersProductsList(setSelectedProductsToOrder(orderRequest, order));
 
         return new OrdersDTO(ordersRepository.save(order));
     }
@@ -129,20 +130,22 @@ public class OrdersService {
 
             ordersProductsRepository.deleteAll(ordersProductsList);
 
-            order.setTotalSum(setSelectedProductsToOrder(orderRequest, order));
+            order.setOrdersProductsList(setSelectedProductsToOrder(orderRequest, order));
         }
 
-        Optional.ofNullable(orderRequest.getPhone()).ifPresent(orderRequest::setPhone);
-        Optional.ofNullable(orderRequest.getEmail()).ifPresent(orderRequest::setEmail);
-        Optional.ofNullable(orderRequest.getComment()).ifPresent(orderRequest::setComment);
-        Optional.ofNullable(orderRequest.getIsPaymentDone()).ifPresent(orderRequest::setIsPaymentDone);
+        Optional.ofNullable(orderRequest.getPhone()).ifPresent(order::setPhone);
+        Optional.ofNullable(orderRequest.getEmail()).ifPresent(order::setEmail);
+        Optional.ofNullable(orderRequest.getComment()).ifPresent(order::setComment);
+        Optional.ofNullable(orderRequest.getIsPaymentDone()).ifPresent(order::setIsPaymentDone);
 
         return new OrdersDTO(ordersRepository.save(order));
     }
 
-    private Double setSelectedProductsToOrder(OrdersRequest orderRequest, Orders order) {
+    private List<Orders_Products> setSelectedProductsToOrder(OrdersRequest orderRequest, Orders order) {
 
         double totalSum = 0.0;
+
+        List<Orders_Products> ordersProductsList = new ArrayList<>();
 
         for (SelectedProducts selectedProduct : orderRequest.getSelectedProductsList()) {
 
@@ -166,20 +169,35 @@ public class OrdersService {
 
             ordersProduct.setOrderId(order);
             ordersProduct.setProductId(product);
+            ordersProduct.setUserId(order.getUserId());
             //ordersProduct.setSizeId(size);
+            ordersProduct.setProductName(product.getName());
             ordersProduct.setSizeName(size.getName());
             ordersProduct.setQuantity(selectedProduct.getQuantity());
             ordersProduct.setPrice(productsSize.getPrice() * selectedProduct.getQuantity());
 
             totalSum += productsSize.getPrice() * selectedProduct.getQuantity();
 
-            productsSize.setQuantity(productsSize.getQuantity() - 1);
+            if (productsSize.getQuantity() - selectedProduct.getQuantity() < 0) {
+
+                throw new IllegalArgumentException("You Selected More Quantity Than It Has In Stock.\n" +
+                        "Product ID: " + product.getId() + "\nProduct Name: " + product.getName() +
+                        "\nRemaining Stock: " + productsSize.getQuantity());
+            }
+
+            productsSize.setQuantity(productsSize.getQuantity() - selectedProduct.getQuantity());
             productsSizesRepository.save(productsSize);
 
             ordersProductsRepository.save(ordersProduct);
+
+            ordersProductsList.add(ordersProduct);
         }
 
-        return totalSum;
+        order.setTotalSum(totalSum);
+
+        ordersRepository.save(order);
+
+        return ordersProductsList;
     }
 
     public String delete(Long orderId) {

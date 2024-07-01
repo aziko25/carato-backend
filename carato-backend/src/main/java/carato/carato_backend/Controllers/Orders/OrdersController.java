@@ -32,7 +32,7 @@ public class OrdersController {
     }
 
     @Authorization(requiredRoles = {"ADMIN", "USER"})
-    @GetMapping("/allMy")
+    @PostMapping("/allMy")
     public ResponseEntity<?> getAllMy(@RequestParam Integer page, @RequestBody(required = false) OrderFilters filter) {
 
         return ResponseEntity.ok(ordersService.getAllMy(page, filter));

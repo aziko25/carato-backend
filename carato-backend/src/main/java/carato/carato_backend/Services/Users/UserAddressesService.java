@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 import static carato.carato_backend.Configurations.JWT.AuthorizationMethods.USER_ID;
 
 @Service
@@ -32,6 +34,7 @@ public class UserAddressesService {
         Users user = usersRepository.findById(USER_ID).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         UserAddresses userAddress = UserAddresses.builder()
+                .createdTime(LocalDateTime.now())
                 .address(userAddressesRequest.getAddress())
                 .userId(user)
                 .build();

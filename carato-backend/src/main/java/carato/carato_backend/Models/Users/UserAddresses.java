@@ -23,6 +23,7 @@ public class UserAddresses {
 
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdTime;
+
     private String address;
 
     @ManyToOne

@@ -32,14 +32,11 @@ public class OrdersDTO {
     private String email;
     private String comment;
     private Boolean isPaymentDone;
-    private String style;
-    private String previewImageUrl;
 
     private Long userId;
     private String username;
 
     private List<Map<String, Object>> productsList;
-    private List<Map<String, Object>> imagesList;
 
     public OrdersDTO(Orders order) {
 
@@ -51,18 +48,22 @@ public class OrdersDTO {
         email = order.getEmail();
         comment = order.getComment();
         isPaymentDone = order.getIsPaymentDone();
+        userId = order.getUserId().getId();
+        username = order.getUserId().getUsername();
 
         Set<Orders_Products> products = new HashSet<>(order.getOrdersProductsList());
-
+        System.out.println(products.size());
         productsList = products.stream()
-                .sorted(Comparator.comparing(Orders_Products::getPrice))
                 .map(product -> {
 
+                    System.out.println(product.getProductName());
                     Map<String, Object> map = new LinkedHashMap<>();
 
                     if (product.getProductId() != null) {
 
                         map.put("id", product.getProductId().getId());
+                        map.put("style", product.getProductId().getStyle());
+                        map.put("previewImageUrl", product.getProductId().getImageUrl());
 
                         if (product.getProductId().getBrandId() != null) {
 
@@ -79,7 +80,7 @@ public class OrdersDTO {
                         if (product.getProductId().getProductImages() != null && !product.getProductId().getProductImages().isEmpty()) {
 
                             Set<Product_Images> images = new HashSet<>(product.getProductId().getProductImages());
-                            imagesList = images.stream()
+                            List<Map<String, Object>> imagesList = images.stream()
                                     .sorted(Comparator.comparing(Product_Images::getId))
                                     .map(image -> {
 
@@ -89,8 +90,10 @@ public class OrdersDTO {
                                         imagesMap.put("imageUrl", image.getImage());
 
                                         return imagesMap;
-                                    }).collect(Collectors.toList());
+                                    }).toList();
+                            map.put("imagesList", imagesList);
                         }
+
                     }
 
                     map.put("name", product.getProductName());
