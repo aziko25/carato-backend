@@ -74,10 +74,10 @@ public class OrdersService {
 
         ordersRepository.save(order);
 
+        order.setOrdersProductsList(setSelectedProductsToOrder(orderRequest, order));
+
         order.setOrderPaymentId(order.getId().toString());
         order.setPayTransactionUrl(clickService.createTransaction(order, orderRequest.getReturnUrl()));
-
-        order.setOrdersProductsList(setSelectedProductsToOrder(orderRequest, order));
 
         return new OrdersDTO(ordersRepository.save(order));
     }
