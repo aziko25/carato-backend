@@ -26,7 +26,7 @@ public class Orders {
     @Column(unique = true)
     private String orderPaymentId;
 
-    private String returnUrl;
+    private String payTransactionUrl;
 
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdTime;

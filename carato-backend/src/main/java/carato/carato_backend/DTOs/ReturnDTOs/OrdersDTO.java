@@ -43,7 +43,7 @@ public class OrdersDTO {
     public OrdersDTO(Orders order) {
 
         id = order.getId();
-        returnUrl = order.getReturnUrl();
+        returnUrl = order.getPayTransactionUrl();
         createdTime = order.getCreatedTime();
         address = order.getAddress();
         totalSum = order.getTotalSum();

@@ -75,7 +75,7 @@ public class OrdersService {
         ordersRepository.save(order);
 
         order.setOrderPaymentId(order.getId().toString());
-        order.setReturnUrl(clickService.createTransaction(order, orderRequest.getReturnUrl()));
+        order.setPayTransactionUrl(clickService.createTransaction(order, orderRequest.getReturnUrl()));
 
         order.setOrdersProductsList(setSelectedProductsToOrder(orderRequest, order));
 
