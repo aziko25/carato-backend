@@ -23,7 +23,7 @@ public class OrdersDTO {
 
     private Long id;
 
-    private String returnUrl;
+    private String payTransactionUrl;
 
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdTime;
@@ -43,7 +43,7 @@ public class OrdersDTO {
     public OrdersDTO(Orders order) {
 
         id = order.getId();
-        returnUrl = order.getPayTransactionUrl();
+        payTransactionUrl = order.getPayTransactionUrl();
         createdTime = order.getCreatedTime();
         address = order.getAddress();
         totalSum = order.getTotalSum();
