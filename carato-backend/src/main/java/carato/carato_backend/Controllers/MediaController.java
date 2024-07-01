@@ -17,7 +17,7 @@ import java.nio.file.Path;
 
 @Controller
 @RequiredArgsConstructor
-public class ImagesController {
+public class MediaController {
 
     @Value("${imagesDir}")
     private String imagesDir;
