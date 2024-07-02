@@ -62,7 +62,15 @@ public class OrdersService {
         UserAddresses userAddress = userAddressesRepository.findByIdAndUserId(orderRequest.getAddressId(), user)
                 .orElseThrow(() -> new EntityNotFoundException("Address Not Found"));
 
+        boolean isPreOrder = false;
+        if (orderRequest.getIsPreOrder() != null) {
+
+            isPreOrder = orderRequest.getIsPreOrder();
+        }
+
         Orders order = Orders.builder()
+                .isPreOrder(isPreOrder)
+                .deliveryType(orderRequest.getDeliveryType())
                 .createdTime(LocalDateTime.now())
                 .phone(orderRequest.getPhone())
                 .email(orderRequest.getEmail())
@@ -78,7 +86,7 @@ public class OrdersService {
 
         order.setOrderPaymentId(order.getId().toString());
 
-        if (orderRequest.getPaymentType().equalsIgnoreCase("click")) {
+        if (orderRequest.getPaymentType() != null && orderRequest.getPaymentType().equalsIgnoreCase("click")) {
 
             order.setPayTransactionUrl(clickService.createTransaction(order, orderRequest.getReturnUrl()));
         }
@@ -92,8 +100,9 @@ public class OrdersService {
 
         if (filter != null) {
 
-            return ordersRepository.findAllByCreatedTimeBetween
-                    (filter.getStartTime().atStartOfDay(), filter.getEndTime().atTime(23, 59), pageable)
+            return ordersRepository.findAllByCreatedTimeBetweenAndIsPreOrder(
+                    filter.getStartTime().atStartOfDay(),
+                    filter.getEndTime().atTime(23, 59), filter.getIsPreOrder(), pageable)
                     .map(OrdersDTO::new);
         }
 
@@ -114,8 +123,9 @@ public class OrdersService {
 
         if (filter != null) {
 
-            return ordersRepository.findAllByUserIdAndCreatedTimeBetween
-                    (user, filter.getStartTime().atStartOfDay(), filter.getEndTime().atTime(23, 59), pageable)
+            return ordersRepository.findAllByUserIdAndCreatedTimeBetweenAndIsPreOrder
+                    (user, filter.getStartTime().atStartOfDay(),
+                    filter.getEndTime().atTime(23, 59), filter.getIsPreOrder(), pageable)
                     .map(OrdersDTO::new);
         }
 
@@ -125,6 +135,11 @@ public class OrdersService {
     public OrdersDTO update(Long orderId, OrdersRequest orderRequest) {
 
         Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
+
+        if (orderRequest.getIsPreOrder() != null) {
+
+            order.setIsPreOrder(orderRequest.getIsPreOrder());
+        }
 
         if (orderRequest.getAddressId() != null) {
 
@@ -147,6 +162,7 @@ public class OrdersService {
         Optional.ofNullable(orderRequest.getEmail()).ifPresent(order::setEmail);
         Optional.ofNullable(orderRequest.getComment()).ifPresent(order::setComment);
         Optional.ofNullable(orderRequest.getIsPaymentDone()).ifPresent(order::setIsPaymentDone);
+        Optional.ofNullable(orderRequest.getDeliveryType()).ifPresent(order::setDeliveryType);
 
         return new OrdersDTO(ordersRepository.save(order));
     }
@@ -168,7 +184,7 @@ public class OrdersService {
             Products_Sizes productsSize = productsSizesRepository.findByProductIdAndSizeId(product, size)
                     .orElseThrow(() -> new EntityNotFoundException("Product With This Size Is Not Found"));
 
-            if (productsSize.getQuantity() <= 0) {
+            if (orderRequest.getIsPreOrder() == null || (!orderRequest.getIsPreOrder() && productsSize.getQuantity() <= 0)) {
 
                 ordersRepository.delete(order);
 
@@ -180,7 +196,6 @@ public class OrdersService {
             ordersProduct.setOrderId(order);
             ordersProduct.setProductId(product);
             ordersProduct.setUserId(order.getUserId());
-            //ordersProduct.setSizeId(size);
             ordersProduct.setProductName(product.getName());
             ordersProduct.setSizeName(size.getName());
             ordersProduct.setQuantity(selectedProduct.getQuantity());
@@ -188,15 +203,20 @@ public class OrdersService {
 
             totalSum += productsSize.getPrice() * selectedProduct.getQuantity();
 
-            if (productsSize.getQuantity() - selectedProduct.getQuantity() < 0) {
+            if (orderRequest.getIsPreOrder() == null || !orderRequest.getIsPreOrder()) {
 
-                throw new IllegalArgumentException("You Selected More Quantity Than It Has In Stock.\n" +
-                        "Product ID: " + product.getId() + "\nProduct Name: " + product.getName() +
-                        "\nRemaining Stock: " + productsSize.getQuantity());
+                if (productsSize.getQuantity() - selectedProduct.getQuantity() < 0) {
+
+                    throw new IllegalArgumentException("You Selected More Quantity Than It Has In Stock.\n" +
+                            "Product ID: " + product.getId() + "\nProduct Name: " + product.getName() +
+                            "\nRemaining Stock: " + productsSize.getQuantity());
+                }
+                else {
+
+                    productsSize.setQuantity(productsSize.getQuantity() - selectedProduct.getQuantity());
+                    productsSizesRepository.save(productsSize);
+                }
             }
-
-            productsSize.setQuantity(productsSize.getQuantity() - selectedProduct.getQuantity());
-            productsSizesRepository.save(productsSize);
 
             ordersProductsRepository.save(ordersProduct);
 

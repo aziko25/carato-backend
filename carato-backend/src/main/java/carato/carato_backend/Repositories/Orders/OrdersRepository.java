@@ -15,9 +15,11 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     Page<Orders> findAllByUserId(Users user, Pageable pageable);
 
-    Page<Orders> findAllByCreatedTimeBetween(LocalDateTime startTime, LocalDateTime endTime, Pageable pageable);
+    Page<Orders> findAllByCreatedTimeBetweenAndIsPreOrder
+            (LocalDateTime startTime, LocalDateTime endTime, Boolean isPreOrder, Pageable pageable);
 
-    Page<Orders> findAllByUserIdAndCreatedTimeBetween(Users user, LocalDateTime startTime, LocalDateTime endTime, Pageable pageable);
+    Page<Orders> findAllByUserIdAndCreatedTimeBetweenAndIsPreOrder
+            (Users user, LocalDateTime startTime, LocalDateTime endTime, Boolean isPreOrder, Pageable pageable);
 
     Optional<Orders> findByOrderPaymentId(String id);
 }

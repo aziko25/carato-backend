@@ -11,4 +11,5 @@ public class OrderFilters {
 
     private LocalDate startTime;
     private LocalDate endTime;
+    private Boolean isPreOrder;
 }

@@ -13,6 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class OrdersRequest {
 
+    private Boolean isPreOrder;
+    private String deliveryType;
     private String paymentType;
     private String phone;
     private String email;

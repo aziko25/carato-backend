@@ -24,6 +24,8 @@ public class OrdersDTO {
     private Long id;
 
     private String payTransactionUrl;
+    private Boolean isPreOrder;
+    private String deliveryType;
 
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdTime;
@@ -44,6 +46,8 @@ public class OrdersDTO {
 
         id = order.getId();
         payTransactionUrl = order.getPayTransactionUrl();
+        isPreOrder = order.getIsPreOrder();
+        deliveryType = order.getDeliveryType();
         createdTime = order.getCreatedTime();
         address = order.getAddress();
         totalSum = order.getTotalSum();
